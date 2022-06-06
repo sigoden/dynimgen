@@ -53,7 +53,10 @@ fn run() -> Result<()> {
     let server = Server::http(&addr).map_err(|e| anyhow!("Cannot bind addr `{}`, {}", &addr, e))?;
     info!("Listen on {}", &addr);
 
-    let executor = Executor::default();
+    let executor = match args.pool_size.as_ref() {
+        Some(size) => Executor::with_size(*size),
+        None => Executor::default(),
+    };
 
     for request in server.incoming_requests() {
         let generator = generator.clone();

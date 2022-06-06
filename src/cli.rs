@@ -12,7 +12,11 @@ pub struct Args {
     #[clap(short, long, default_value_t = 8080)]
     pub port: u16,
 
-    /// Only urls matched allow-urls is allowd to be fetched
-    #[clap(long = "allow-url", name = "URL")]
+    /// Only urls matched allow-urls is allowed to fetch
+    #[clap(short, long, name = "URL")]
     pub allow_urls: Vec<String>,
+
+    /// Set max concurrency size
+    #[clap(long, name = "NUM")]
+    pub pool_size: Option<usize>,
 }
