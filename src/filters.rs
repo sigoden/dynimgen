@@ -9,19 +9,21 @@ pub fn register(tera: &mut Tera) {
     tera.register_filter("to_qr", to_qr);
 }
 
-fn fetch(value: &Value, _: &HashMap<String, Value>) -> Result<Value> {
+fn fetch(value: &Value, args: &HashMap<String, Value>) -> Result<Value> {
     let raw_url = try_get_value!("fetch", "value", String, value);
+    let timeout = match args.get("timeout") {
+        Some(val) => try_get_value!("fetch", "timeout", u64, val),
+        None => 0,
+    };
+
     let create_err = |msg: &str| Error::msg(format!("Failed to fetch `{}`, {}", &raw_url, msg));
 
-    let (allow, timeout) = {
-        let state = STATE.read().unwrap();
-        (state.allow_url(&raw_url), state.fetch_timeout())
-    };
-    if !allow {
+    if !STATE.read().unwrap().allow_url(&raw_url) {
         return Err(create_err("Not allowd url"));
     }
 
     let mut req = ureq::get(&raw_url);
+
     if timeout > 0 {
         req = req.timeout(Duration::from_millis(timeout));
     }
@@ -53,10 +55,23 @@ fn fetch(value: &Value, _: &HashMap<String, Value>) -> Result<Value> {
     Ok(Value::String(to_dataurl(&mime, &bytes)))
 }
 
-fn to_qr(value: &Value, _: &HashMap<String, Value>) -> Result<Value> {
+fn to_qr(value: &Value, args: &HashMap<String, Value>) -> Result<Value> {
     let s = try_get_value!("to_qr", "value", String, value);
+    let bg = match args.get("bg") {
+        Some(val) => try_get_value!("to_qr", "bg", String, val),
+        None => "#000".to_string(),
+    };
+    let fg = match args.get("fg") {
+        Some(val) => try_get_value!("to_qr", "fg", String, val),
+        None => "#fff".to_string(),
+    };
+
     let code = QrCode::new(s).unwrap();
-    let svg_xml = code.render::<svg::Color>().build();
+    let svg_xml = code
+        .render()
+        .dark_color(svg::Color(&bg))
+        .light_color(svg::Color(&fg))
+        .build();
     Ok(Value::String(to_dataurl(MIME_SVG, svg_xml.as_bytes())))
 }
 

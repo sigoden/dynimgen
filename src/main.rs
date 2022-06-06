@@ -46,11 +46,7 @@ fn run() -> Result<()> {
         bail!("Invalid workdir `{}`", workdir.display());
     }
 
-    STATE
-        .write()
-        .unwrap()
-        .set_allow_urls(&args.allow_urls)
-        .set_fetch_timeout(args.fetch_timeout.unwrap_or_default());
+    STATE.write().unwrap().set_allow_urls(&args.allow_urls);
 
     let generator = Arc::new(Generator::new(&workdir)?);
 
