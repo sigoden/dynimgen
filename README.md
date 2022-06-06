@@ -1,65 +1,80 @@
-# postergen
+# dynimgen
 
-A high performance poster generator.
+[![CI](https://github.com/sigoden/dynimgen/actions/workflows/ci.yaml/badge.svg)](https://github.com/sigoden/dynimgen/actions/workflows/ci.yaml)
+[![Crates](https://img.shields.io/crates/v/dynimgen.svg)](https://crates.io/crates/dynimgen)
+
+ A self-hosted dynamic image generator.
 
 <!-- #[demo]() -->
 
 ## How to use
 
-1. The designer exports the design drawing as an svg file
+1. The designers export the design drawing as an svg file
 
 ```svg
 <svg>
-  <image src="data:image/png;base64,...." /> 
-  <image src="data:image/png;base64,...." />
+  <rect />
+  <image src="img.png" /> 
+  <image src="qr.png" />
   <text>66666</text>
 </svg>
 ```
 
-2. The engineer edits the svg file, replaces the changed parts with template variables, and generates the svg template `poster1.svg`
+2. The engineers edit the svg file, replace the changed parts with template variables, save svg template to `poster1.svg`
 
 ```svg
 <svg>
-  <img src="{{ avatar | fetch }}">
-  <img src="{{ invite_url | to_qr }}">
+  <rect />
+  <img src="{{ img | fetch }}">
+  <img src="{{ qr | to_qr }}">
   <text>{{ code }}</text>
 </svg>
 ```
 
-3. Run `postergen`, make sure the svg template is in the `postergen` workdir
+3. Run `dynimgen`, make sure the svg template is in the `dynimgen` workdir
 
 ```sh
 $ ls data
 poster1.svg
 
-$ postergen data/
-[2022-06-05T14:51:53Z INFO  postergen::generator] Mount `/poster1`
-[2022-06-05T14:51:53Z INFO  postergen] Listen on 0.0.0.0:8080
+$ dynimgen fixtures/
+[2022-06-05T14:51:53Z INFO  dynimgen::generator] Mount `/poster1`
+[2022-06-05T14:51:53Z INFO  dynimgen] Listen on 0.0.0.0:8080
 ```
 
-4. Visit `http://localhost:8080/poster1?avatar=http://site/avatar.png&invite_url=http://site/invite&code=12345` to view the generated poster
+4. Visit `http://localhost:8080/poster1?img=https://picsum.photos/250&qr=dynimgen&code=12345` to view the generated image
 
 ## How it work
 
-1. Extract data from the query part of url
-2. Pass data to template engine to generate a new svg file
-3. Render the svg to a png and response
+1. Extract data from the query of request
+2. Pass data to template engine to generate new svg
+3. Render the svg to a png then response
 
-## Syntax
+## Template syntax
 
-**postergen** uses [Tera](https://github.com/Keats/tera) as the template engine. It has a syntax based on [Jinja2](http://jinja.pocoo.org/) and [Django](https://docs.djangoproject.com/en/3.1/topics/templates/) templates.
-
-There are 3 kinds of delimiters and those cannot be changed:
-
-- `{{` and `}}` for expressions
-- `{%` or `{%-` and `%}` or `-%}` for statements
-- `{#` and `#}` for comments
+**dynimgen** uses [Tera](https://github.com/Keats/tera) as the template engine. It has a syntax based on [Jinja2](http://jinja.pocoo.org/) and [Django](https://docs.djangoproject.com/en/3.1/topics/templates/) templates.
 
 See the [Tera Documentation](https://tera.netlify.app/docs/#templates) for more information about [control structures](https://tera.netlify.app/docs/#control-structures), [built-ins filters](https://tera.netlify.app/docs/#built-ins), etc.
 
 
-Custom built-in filters that **postergen** uses:
+Custom built-in filters that **dynimgen** uses:
 
-- `fetch`: Fetch remote resource and encode as data-url
-- `to_qr`: Convert text to qrcode
+### `fetch`
 
+Fetch remote resource and encode as data-url
+
+Example: `{{ img | fetch }}` `{{ img | fetch(timeout=10000) }}`  
+
+### `to_qr`
+
+Convert text to qrcode
+
+Example: `{{ qr | to_qr }}`  `{{ qr | to_qr(bg='#fff', fg='#000') }}` 
+
+## License
+
+Copyright (c) 2022 dynimgen-developers.
+
+dynimgen is made available under the terms of either the MIT License or the Apache License 2.0, at your option.
+
+See the LICENSE-APACHE and LICENSE-MIT files for license details.

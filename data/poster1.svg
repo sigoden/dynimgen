@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 380 580" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <rect width="380" height="580" style="fill:#f1f2f2" />
+  <image x="40" y="41.39" width="300" height="300" xlink:href="{{ img | fetch }}"/>
+  <image x="40" y="390" width="100" height="100" xlink:href="{{ qr | to_qr }}"/>
+  <text transform="translate(236.5 446.5) scale(1 1)" style="font-size:40;fill:#231f20;font-family:&quot;Times New Roman&quot;;">{{ code }}</text>
+</svg>
