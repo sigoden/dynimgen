@@ -1,9 +1,22 @@
 [package]
-name = "postergen"
+name = "dynimgen"
 version = "0.1.0"
 edition = "2021"
+authors = ["sigoden <sigoden@gmail.com>"]
+description = " A self-hosted dynamic image generator."
+license = "MIT OR Apache-2.0"
+homepage = "https://github.com/sigoden/dynimgen"
+repository = "https://github.com/sigoden/dynimgen"
+autotests = false
+categories = ["command-line-utilities", "web-programming::http-server"]
+keywords = ["dynamic", "image", "server", "generator", "cli"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+include = [
+  "Cargo.toml",
+  "LICENSE-MIT",
+  "LICENSE-APACHE",
+  "src/**/*",
+]
 
 [dependencies]
 anyhow = "1.0.57"

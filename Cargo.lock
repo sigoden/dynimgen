@@ -292,6 +292,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "dynimgen"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "base64",
+ "clap",
+ "env_logger",
+ "lazy_static",
+ "log",
+ "qrcode",
+ "resvg",
+ "tera",
+ "threadpool",
+ "tiny-skia",
+ "tiny_http",
+ "ureq",
+ "url",
+ "usvg",
+]
+
+[[package]]
 name = "env_logger"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -745,27 +766,6 @@ dependencies = [
  "crc32fast",
  "deflate",
  "miniz_oxide",
-]
-
-[[package]]
-name = "postergen"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "base64",
- "clap",
- "env_logger",
- "lazy_static",
- "log",
- "qrcode",
- "resvg",
- "tera",
- "threadpool",
- "tiny-skia",
- "tiny_http",
- "ureq",
- "url",
- "usvg",
 ]
 
 [[package]]
