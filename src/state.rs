@@ -16,6 +16,9 @@ impl State {
         self.allow_urls = allow_urls.to_vec();
     }
     pub fn guard_url(&self, url: &str) -> bool {
+        if self.allow_urls.is_empty() {
+            return true;
+        }
         self.allow_urls
             .iter()
             .any(|prefix| url.starts_with(prefix.as_str()))

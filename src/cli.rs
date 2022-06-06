@@ -12,7 +12,7 @@ pub struct Args {
     #[clap(short, long, default_value_t = 8080)]
     pub port: u16,
 
-    /// Only urls matched allow-urls is allowed to fetch
+    /// Url prefix allowed to fetch, if miss, allow all
     #[clap(short, long, name = "URL")]
     pub allow_urls: Vec<String>,
 

@@ -64,7 +64,8 @@ impl Generator {
             Err(e) => {
                 let r400 = || {
                     let errs: Vec<String> = e.chain().skip(1).map(|v| v.to_string()).collect();
-                    error!(r#"Failed to generate `{}`, {}, {}"#, &url, e, errs.join(", "));
+                    let cause = errs.join(", ");
+                    error!(r#"Failed to generate `{}`, {}, {}"#, &url, e, cause,);
                     Response::from_data(b"Bad Request".to_vec()).with_status_code(StatusCode(400))
                 };
                 if let Some(e) = e.downcast_ref::<tera::Error>() {
@@ -87,7 +88,7 @@ impl Generator {
             ctx.insert(k, &v);
         }
         let svg_data = self.tera.render(url.path(), &ctx)?;
-        if ctx.get("svg").is_some() {
+        if ctx.get("export_svg").is_some() {
             return Ok((MIME_SVG, svg_data.as_bytes().to_vec()));
         }
         let png_data = self.svg_to_png(&svg_data)?;
