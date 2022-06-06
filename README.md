@@ -20,7 +20,7 @@ A high performance poster generator.
 
 ```svg
 <svg>
-  <img src="{{ avatar | remote_to_data_url }}">
+  <img src="{{ avatar | fetch }}">
   <img src="{{ invite_url | to_qr }}">
   <text>{{ code }}</text>
 </svg>
@@ -60,6 +60,6 @@ See the [Tera Documentation](https://tera.netlify.app/docs/#templates) for more 
 
 Custom built-in filters that **postergen** uses:
 
-- `remote_to_data_url`: Fetch remote resource and encode as data-url
+- `fetch`: Fetch remote resource and encode as data-url
 - `to_qr`: Convert text to qrcode
 

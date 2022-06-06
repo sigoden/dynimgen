@@ -2,15 +2,17 @@ mod cli;
 mod executor;
 mod filters;
 mod generator;
+mod state;
 
 use std::sync::Arc;
 use std::{env, fs};
 
+use crate::state::STATE;
 use crate::{cli::Args, executor::Executor, generator::Generator};
 
 use anyhow::{anyhow, bail};
 use clap::Parser;
-use tiny_http::{Header, Response, Server, StatusCode};
+use tiny_http::Server;
 
 pub use anyhow::Result;
 
@@ -44,6 +46,8 @@ fn run() -> Result<()> {
         bail!("Invalid workdir `{}`", workdir.display());
     }
 
+    STATE.write().unwrap().set_allow_urls(&args.allow_urls);
+
     let generator = Arc::new(Generator::new(&workdir)?);
 
     let server = Server::http(&addr).map_err(|e| anyhow!("Cannot bind addr `{}`, {}", &addr, e))?;
@@ -55,32 +59,7 @@ fn run() -> Result<()> {
         let generator = generator.clone();
         executor.execute(move || {
             let url = request.url().to_owned();
-            let response = match generator.generate(&url) {
-                Ok(data) => {
-                    info!(r#"Generate `{}` {}"#, &url, data.len());
-                    Response::from_data(data).with_header(Header {
-                        field: "Content-Type".parse().unwrap(),
-                        value: "image/png".parse().unwrap(),
-                    })
-                }
-                Err(e) => {
-                    let r400 = || {
-                        error!(r#"Failed to generate `{}`, {}"#, &url, e);
-                        Response::from_data(b"Bad Request".to_vec())
-                            .with_status_code(StatusCode(400))
-                    };
-                    if let Some(e) = e.downcast_ref::<tera::Error>() {
-                        if let tera::ErrorKind::TemplateNotFound(_) = e.kind {
-                            Response::from_data(b"Not Found".to_vec())
-                                .with_status_code(StatusCode(404))
-                        } else {
-                            r400()
-                        }
-                    } else {
-                        r400()
-                    }
-                }
-            };
+            let response = generator.handle(&request);
             if let Err(e) = request.respond(response) {
                 error!(r#"Failed to response `{}`, {}"#, &url, e)
             }
