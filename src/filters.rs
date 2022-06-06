@@ -1,7 +1,7 @@
 use crate::{generator::MIME_SVG, STATE};
 use qrcode::render::svg;
 use qrcode::QrCode;
-use std::{collections::HashMap, io::Read};
+use std::{collections::HashMap, io::Read, time::Duration};
 use tera::{try_get_value, Error, Result, Tera, Value};
 
 pub fn register(tera: &mut Tera) {
@@ -13,13 +13,20 @@ fn fetch(value: &Value, _: &HashMap<String, Value>) -> Result<Value> {
     let raw_url = try_get_value!("fetch", "value", String, value);
     let create_err = |msg: &str| Error::msg(format!("Failed to fetch `{}`, {}", &raw_url, msg));
 
-    if !STATE.read().unwrap().guard_url(&raw_url) {
+    let (allow, timeout) = {
+        let state = STATE.read().unwrap();
+        (state.allow_url(&raw_url), state.fetch_timeout())
+    };
+    if !allow {
         return Err(create_err("Not allowd url"));
     }
 
-    let resp = ureq::get(&raw_url)
-        .call()
-        .map_err(|e| create_err(&e.to_string()))?;
+    let mut req = ureq::get(&raw_url);
+    if timeout > 0 {
+        req = req.timeout(Duration::from_millis(timeout));
+    }
+
+    let resp = req.call().map_err(|e| create_err(&e.to_string()))?;
 
     let status = resp.status();
     if status >= 300 {

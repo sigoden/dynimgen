@@ -16,7 +16,11 @@ pub struct Args {
     #[clap(short, long, name = "URL")]
     pub allow_urls: Vec<String>,
 
-    /// Set max concurrency size
-    #[clap(long, name = "NUM")]
+    /// Max timeout for fetching in ms
+    #[clap(long, name = "DURATION")]
+    pub fetch_timeout: Option<u64>,
+
+    /// Max concurrency, if miss, not limited
+    #[clap(long = "concurrency", name = "NUM")]
     pub pool_size: Option<usize>,
 }
