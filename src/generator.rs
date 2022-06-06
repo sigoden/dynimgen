@@ -63,7 +63,8 @@ impl Generator {
             }
             Err(e) => {
                 let r400 = || {
-                    error!(r#"Failed to generate `{}`, {:?}"#, &url, e);
+                    let errs: Vec<String> = e.chain().skip(1).map(|v| v.to_string()).collect();
+                    error!(r#"Failed to generate `{}`, {}, {}"#, &url, e, errs.join(", "));
                     Response::from_data(b"Bad Request".to_vec()).with_status_code(StatusCode(400))
                 };
                 if let Some(e) = e.downcast_ref::<tera::Error>() {

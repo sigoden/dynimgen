@@ -11,10 +11,10 @@ pub fn register(tera: &mut Tera) {
 
 fn fetch(value: &Value, _: &HashMap<String, Value>) -> Result<Value> {
     let raw_url = try_get_value!("fetch", "value", String, value);
-    let create_err = |msg: &str| Error::msg(format!("Fail to fetch `{}`, {}", &raw_url, msg));
+    let create_err = |msg: &str| Error::msg(format!("Failed to fetch `{}`, {}", &raw_url, msg));
 
     if !STATE.read().unwrap().guard_url(&raw_url) {
-        return Err(create_err("invalid url"));
+        return Err(create_err("Not allowd url"));
     }
 
     let resp = ureq::get(&raw_url)
@@ -23,11 +23,11 @@ fn fetch(value: &Value, _: &HashMap<String, Value>) -> Result<Value> {
 
     let status = resp.status();
     if status >= 300 {
-        return Err(create_err(&format!("status `{}` is not ok", status)));
+        return Err(create_err(&format!("Status `{}` is not ok", status)));
     }
     let mime = resp
         .header("Content-Type")
-        .ok_or_else(|| create_err("no content-type header"))?
+        .ok_or_else(|| create_err("No content-type header"))?
         .to_owned();
 
     let mut bytes: Vec<u8> = match resp.header("Content-Length").and_then(|v| v.parse().ok()) {
