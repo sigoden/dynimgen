@@ -1,0 +1,14 @@
+# Directories
+/.git/
+/.github/
+/target/
+/examples/
+/docs/
+/benches/
+/data/
+/tmp/
+
+# Files
+.gitignore
+*.md
+LICENSE*
