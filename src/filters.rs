@@ -26,6 +26,8 @@ fn fetch(value: &Value, _: &HashMap<String, Value>) -> Result<Value> {
         req = req.timeout(Duration::from_millis(timeout));
     }
 
+    trace!("Start fetching {}", &raw_url);
+
     let resp = req.call().map_err(|e| create_err(&e.to_string()))?;
 
     let status = resp.status();
@@ -45,6 +47,8 @@ fn fetch(value: &Value, _: &HashMap<String, Value>) -> Result<Value> {
     resp.into_reader()
         .read_to_end(&mut bytes)
         .map(|e| create_err(&e.to_string()))?;
+
+    trace!("Done fetch {}, len {}", &raw_url, bytes.len());
 
     Ok(Value::String(to_dataurl(&mime, &bytes)))
 }

@@ -55,7 +55,7 @@ impl Generator {
         let url = request.url().to_owned();
         match self.handle_impl(&url) {
             Ok((mime, data)) => {
-                info!(r#"Generate `{}` {}"#, &url, data.len());
+                info!(r#"Generate `{}`, len {}"#, &url, data.len());
                 Response::from_data(data).with_header(Header {
                     field: "Content-Type".parse().unwrap(),
                     value: mime.parse().unwrap(),
@@ -82,24 +82,27 @@ impl Generator {
     }
 
     fn handle_impl(&self, raw_url: &str) -> crate::Result<(&str, Vec<u8>)> {
+        trace!("Start handle {}", &raw_url);
         let url: Url = format!("http://localhost{}", raw_url).parse()?;
         let mut ctx = Context::new();
         for (k, v) in url.query_pairs() {
             ctx.insert(k, &v);
         }
         let svg_data = self.tera.render(url.path(), &ctx)?;
+        trace!("Done template svg {}", &raw_url);
         if ctx.get("export_svg").is_some() {
             return Ok((MIME_SVG, svg_data.as_bytes().to_vec()));
         }
-        let png_data = self.svg_to_png(&svg_data)?;
+        let png_data = self.svg_to_png(&raw_url, &svg_data)?;
         Ok((MIME_PNG, png_data))
     }
 
-    fn svg_to_png(&self, svg_data: &str) -> crate::Result<Vec<u8>> {
+    fn svg_to_png(&self, raw_url: &str, svg_data: &str) -> crate::Result<Vec<u8>> {
         let rtree = usvg::Tree::from_data(svg_data.as_bytes(), &self.opt.to_ref())?;
         let pixmap_size = rtree.svg_node().size.to_screen_size();
         let mut pixmap = tiny_skia::Pixmap::new(pixmap_size.width(), pixmap_size.height())
             .ok_or_else(|| anyhow!("Invalid size {}", &pixmap_size))?;
+        trace!("Start pixmap svg {}", &raw_url);
         resvg::render(
             &rtree,
             usvg::FitTo::Original,
@@ -107,6 +110,7 @@ impl Generator {
             pixmap.as_mut(),
         )
         .ok_or_else(|| anyhow!("Cannot generate bitmap"))?;
+        trace!("Start encode png {}", &raw_url);
         let output = pixmap.encode_png()?;
         Ok(output)
     }

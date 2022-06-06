@@ -29,7 +29,7 @@ fn run() -> Result<()> {
     if env::var("RUST_LOG").is_err() {
         env::set_var("RUST_LOG", "info")
     }
-    env_logger::builder().init();
+    env_logger::builder().format_timestamp_millis().init();
 
     let args = Args::parse();
 
