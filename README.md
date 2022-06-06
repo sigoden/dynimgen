@@ -9,7 +9,8 @@
 
 ## How to use
 
-1. The designers export the design drawing as an svg file
+
+step 1: The designers export the design drawing as an svg file
 
 ```svg
 <svg>
@@ -20,9 +21,9 @@
 </svg>
 ```
 
-2. The engineers edit the svg file, replace the changed parts with template variables, save svg template to `poster1.svg`
+step 2: The engineers edit the svg file, replace the changed parts with template variables
 
-```svg
+```
 <svg>
   <rect />
   <img src="{{ img | fetch }}">
@@ -31,7 +32,7 @@
 </svg>
 ```
 
-3. Run `dynimgen`, make sure the svg template is in the `dynimgen` workdir
+step 3: Run `dynimgen`, make sure the svg template is in the `dynimgen` workdir
 
 ```sh
 $ ls data
@@ -42,7 +43,7 @@ $ dynimgen fixtures/
 [2022-06-05T14:51:53Z INFO  dynimgen] Listen on 0.0.0.0:8080
 ```
 
-4. Visit `http://localhost:8080/poster1?img=https://picsum.photos/250&qr=dynimgen&code=12345` to view the generated image
+step 4: Visit dynamic generated image by click `http://localhost:8080/poster1?img=https://picsum.photos/250&qr=dynimgen&code=12345`
 
 ## How it work
 

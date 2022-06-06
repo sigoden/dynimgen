@@ -93,7 +93,7 @@ impl Generator {
         if ctx.get("export_svg").is_some() {
             return Ok((MIME_SVG, svg_data.as_bytes().to_vec()));
         }
-        let png_data = self.svg_to_png(&raw_url, &svg_data)?;
+        let png_data = self.svg_to_png(raw_url, &svg_data)?;
         Ok((MIME_PNG, png_data))
     }
 
