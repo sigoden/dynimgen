@@ -55,7 +55,7 @@ impl Generator {
         let url = request.url().to_owned();
         match self.handle_impl(&url) {
             Ok((mime, data)) => {
-                info!(r#"Generate `{}`, len {}"#, &url, data.len());
+                info!(r#"Generate `{}`, size {}"#, &url, data.len());
                 Response::from_data(data).with_header(Header {
                     field: "Content-Type".parse().unwrap(),
                     value: mime.parse().unwrap(),

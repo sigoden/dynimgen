@@ -50,7 +50,7 @@ fn fetch(value: &Value, args: &HashMap<String, Value>) -> Result<Value> {
         .read_to_end(&mut bytes)
         .map(|e| create_err(&e.to_string()))?;
 
-    trace!("Done fetch {}, len {}", &raw_url, bytes.len());
+    trace!("Done fetch {}, size {}", &raw_url, bytes.len());
 
     Ok(Value::String(to_dataurl(&mime, &bytes)))
 }
