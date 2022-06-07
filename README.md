@@ -5,6 +5,8 @@
 
  A self-hosted dynamic image generator.
 
+![demo](https://user-images.githubusercontent.com/4012553/172298679-bdc3e487-4ad7-4f8f-821b-995897a1fbc0.gif)
+
 ## How to use
 
 
@@ -61,7 +63,7 @@ If you request this url, dynimgen will response a png image.
 
 what dynimgen does:
 
-1. Extract variables from the url query of request
+1. Extract path and variables from the request
 2. Pass variables to template engine to generate a svg
 3. Render the svg to a png then response
 
