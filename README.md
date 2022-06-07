@@ -5,7 +5,7 @@
 
  A self-hosted dynamic image generator.
 
-![demo](https://user-images.githubusercontent.com/4012553/172298679-bdc3e487-4ad7-4f8f-821b-995897a1fbc0.gif)
+![demo](https://user-images.githubusercontent.com/4012553/172301586-dec5301f-8d4a-4824-b8e8-697c7f56765e.gif)
 
 ## How to use
 
@@ -35,10 +35,10 @@ step 2: The engineers edit the svg file, replace the changed parts with template
 step 3: Run `dynimgen`, make sure the svg template is in the `dynimgen` workdir
 
 ```sh
-$ ls data
-poster1.svg
+$ ls data/
+Times New Roman.ttf   poster1.svg
 
-$ dynimgen fixtures/
+$ dynimgen data/
 [2022-06-05T14:51:53Z INFO  dynimgen::generator] Mount `/poster1`
 [2022-06-05T14:51:53Z INFO  dynimgen] Listen on 0.0.0.0:8080
 ```
