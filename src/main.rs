@@ -4,7 +4,7 @@ mod filters;
 mod generator;
 mod state;
 
-use std::sync::{Arc, mpsc};
+use std::sync::{mpsc, Arc};
 use std::time::Duration;
 use std::{env, fs, thread};
 
@@ -59,14 +59,13 @@ fn run() -> Result<()> {
         None => Executor::default(),
     };
 
-
     let (tx, rx) = mpsc::channel();
 
     ctrlc::set_handler(move || {
         tx.send(()).expect("Failed to notify exit");
-    }).expect("Error setting Ctrl-C handler");
+    })
+    .expect("Error setting Ctrl-C handler");
 
-    
     let handle = thread::spawn(move || {
         while rx.try_recv().is_err() {
             // In order to reduce CPU load wait 1s for a recv before looping again
