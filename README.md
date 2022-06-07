@@ -5,8 +5,6 @@
 
  A self-hosted dynamic image generator.
 
-<!-- #[demo]() -->
-
 ## How to use
 
 
@@ -43,15 +41,69 @@ $ dynimgen fixtures/
 [2022-06-05T14:51:53Z INFO  dynimgen] Listen on 0.0.0.0:8080
 ```
 
-step 4: Visit dynamic generated image by click `http://localhost:8080/poster1?img=https://picsum.photos/250&qr=dynimgen&code=12345`
+step 4: Build image url according to the following rules
 
-## How it work
+```
+<domain> + <template path> + ? + <template variables>
+```
 
-1. Extract data from the query of request
-2. Pass data to template engine to generate new svg
+For example:
+
+- domain: http://localhost:8080
+- template path: /poster1
+- template variables: { img: "https://picsum.photos/250", qr: "dynimgen", code: 12345 }
+
+Build url:
+
+http://localhost:8080/poster1?img=https://picsum.photos/250&qr=dynimgen&code=12345
+
+If you request this url, dynimgen will response a png image.
+
+what dynimgen does:
+
+1. Extract variables from the url query of request
+2. Pass variables to template engine to generate a svg
 3. Render the svg to a png then response
 
-## Template syntax
+## Advantages
+
+### Server-side rendering advantages
+
+- No browser compatibility, platform compatibility and other issues
+- Code reusability is high, and the poster generation service of h5, applet, and app can be used.
+- Can be updated in a timely and convenient manner
+
+### SVG Template Advantages
+
+- Export SVG directly from design software such as PS/AI
+- No need to reproduce the implementation with html/canvas/dsl
+- Lossless restoration of the design draft without losing any details
+- Free use of font styles
+
+### RUST Advantage
+
+- High performance, high concurrency
+- Single executable program, cross-platform, easy to deploy
+
+## Install
+
+### With cargo
+
+```
+cargo install dynimgen
+```
+
+### With docker
+
+```
+docker run -v `pwd`/data:/data  -p 8080:8080 --rm -it sigoden/dynimgen /data
+```
+
+### Binaries on macOS, Linux, Windows
+
+Download from [Github Releases](https://github.com/sigoden/dynimgen/releases), unzip and add duf to your $PATH.
+
+## Template Engine
 
 **dynimgen** uses [Tera](https://github.com/Keats/tera) as the template engine. It has a syntax based on [Jinja2](http://jinja.pocoo.org/) and [Django](https://docs.djangoproject.com/en/3.1/topics/templates/) templates.
 
