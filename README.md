@@ -5,7 +5,7 @@
 
  A self-hosted dynamic image generator.
 
-![demo](https://user-images.githubusercontent.com/4012553/172301586-dec5301f-8d4a-4824-b8e8-697c7f56765e.gif)
+![demo](https://user-images.githubusercontent.com/4012553/172306599-dff3567a-00c7-4d47-8f71-f93870b2db45.gif)
 
 ## How to use
 
