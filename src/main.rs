@@ -4,8 +4,9 @@ mod filters;
 mod generator;
 mod state;
 
-use std::sync::Arc;
-use std::{env, fs};
+use std::sync::{Arc, mpsc};
+use std::time::Duration;
+use std::{env, fs, thread};
 
 use crate::state::STATE;
 use crate::{cli::Args, executor::Executor, generator::Generator};
@@ -58,16 +59,32 @@ fn run() -> Result<()> {
         None => Executor::default(),
     };
 
-    for request in server.incoming_requests() {
-        let generator = generator.clone();
-        executor.execute(move || {
-            let url = request.url().to_owned();
-            let response = generator.handle(&request);
-            if let Err(e) = request.respond(response) {
-                error!(r#"Failed to response `{}`, {}"#, &url, e)
+
+    let (tx, rx) = mpsc::channel();
+
+    ctrlc::set_handler(move || {
+        tx.send(()).expect("Failed to notify exit");
+    }).expect("Error setting Ctrl-C handler");
+
+    
+    let handle = thread::spawn(move || {
+        while rx.try_recv().is_err() {
+            // In order to reduce CPU load wait 1s for a recv before looping again
+            while let Ok(Some(request)) = server.recv_timeout(Duration::from_secs(1)) {
+                let generator = generator.clone();
+                executor.execute(move || {
+                    let url = request.url().to_owned();
+                    let response = generator.handle(&request);
+                    if let Err(e) = request.respond(response) {
+                        error!(r#"Failed to response `{}`, {}"#, &url, e)
+                    }
+                });
             }
-        });
-    }
+        }
+        executor.join();
+    });
+
+    handle.join().unwrap();
 
     Ok(())
 }

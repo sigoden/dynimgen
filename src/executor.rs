@@ -50,7 +50,6 @@ impl Executor {
         }
     }
 
-    #[allow(dead_code)]
     pub fn join(&self) {
         match *self {
             Executor::Threaded { ref count } => {
