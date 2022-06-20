@@ -3,10 +3,9 @@
 [![CI](https://github.com/sigoden/dynimgen/actions/workflows/ci.yaml/badge.svg)](https://github.com/sigoden/dynimgen/actions/workflows/ci.yaml)
 [![Crates](https://img.shields.io/crates/v/dynimgen.svg)](https://crates.io/crates/dynimgen)
 
- A self-hosted dynamic image generator.
+ A dynamic image generator.
 
 ![demo](https://user-images.githubusercontent.com/4012553/172307949-8e739dcd-e322-44d7-8f29-6dd9aec87d71.gif)
-
 
 ## How to use
 
@@ -67,26 +66,6 @@ what dynimgen does:
 1. Extract path and variables from the request
 2. Pass variables to template engine to generate a svg
 3. Render the svg to a png then response
-
-## Advantages
-
-### Server-side rendering advantages
-
-- No browser compatibility, platform compatibility and other issues
-- Code reusability is high, and the poster generation service of h5, applet, and app can be used.
-- Can be updated in a timely and convenient manner
-
-### SVG Template Advantages
-
-- Export SVG directly from design software such as PS/AI
-- No need to reproduce the implementation with html/canvas/dsl
-- Lossless restoration of the design draft without losing any details
-- Free use of font styles
-
-### RUST Advantage
-
-- High performance, high concurrency
-- Single executable program, cross-platform, easy to deploy
 
 ## Install
 
